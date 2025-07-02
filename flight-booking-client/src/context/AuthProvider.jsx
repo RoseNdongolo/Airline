@@ -1,36 +1,43 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import apiClient from '../api/index'; // Assuming your API client
+import { useState } from 'react';
+import AuthContext from './AuthContext';
+import { authApi } from '../api/api.js';
 
-const AuthContext = createContext();
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const login = async ({ username, password }) => {
+    try {
+      const response = await authApi.login({ username, password });
+      const accessToken = response.access;
 
-    useEffect(() => {
-        // Example: Fetch user data from your backend
-        apiClient.get('/auth/user/') // Adjust endpoint to your Django API
-            .then((response) => {
-                setUser(response.data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setUser(null);
-                setLoading(false);
-            });
-    }, []);
+      localStorage.setItem('token', accessToken);
+      setToken(accessToken);
 
-    return (
-        <AuthContext.Provider value={{ user, loading, setUser }}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
+      setUser(response.user);
+      setError(null);
 
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+      return { user: response.user };
+    } catch (err) {
+      const errorMessage = JSON.parse(err.message);
+      setError(errorMessage);
+      throw err;
     }
-    return context;
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    setError(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, error, token }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
+
+export default AuthProvider;

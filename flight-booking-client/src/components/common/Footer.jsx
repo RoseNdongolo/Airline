@@ -1,26 +1,13 @@
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const Footer = () => {
-    return (
-        <Box
-            component="footer"
-            sx={{
-                py: 3,
-                px: 2,
-                mt: 'auto',
-                backgroundColor: (theme) =>
-                    theme.palette.mode === 'light'
-                        ? theme.palette.grey[200]
-                        : theme.palette.grey[800],
-            }}
-        >
-            <Container maxWidth="sm">
-                <Typography variant="body1" align="center">
-                    © {new Date().getFullYear()} Flight Booking System
-                </Typography>
-            </Container>
-        </Box>
-    );
+  return (
+    <Box sx={{ py: 2, textAlign: 'center', bgcolor: 'grey.200', mt: 'auto' }}>
+      <Typography variant="body2">
+        &copy; {new Date().getFullYear()} Flight Booking System. All rights reserved.
+      </Typography>
+    </Box>
+  );
 };
 
 export default Footer;
