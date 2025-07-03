@@ -7,7 +7,8 @@ import ManageFlights from './ManageFlights';
 import ManageBookings from './ManageBookings';
 import ViewPayments from './ViewPayments';
 import NotFound from '../common/NotFound';
-import Footer from '../common/Footer';
+import FlightForm from './FlightForm';
+
 
 const AdminLayout = () => {
   return (
@@ -50,11 +51,16 @@ const AdminLayout = () => {
           <Route path="airports" element={<ManageAirports />} />
           <Route path="airlines" element={<ManageAirlines />} />
           <Route path="flights" element={<ManageFlights />} />
+
+          <Route path="flights/new" element={<FlightForm />} />          {/* 🆕 Create flight */}
+          <Route path="flights/edit/:id" element={<FlightForm editMode />} />
+          <Route path="bookings" element={<ManageBookings />} />
+
+
           <Route path="bookings" element={<ManageBookings />} />
           <Route path="payments" element={<ViewPayments />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <Footer />
       </Box>
     </Box>
   );

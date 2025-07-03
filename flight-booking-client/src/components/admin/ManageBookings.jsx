@@ -1,55 +1,46 @@
-import { useState, useEffect } from 'react';
-import { Box, Typography, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { bookingApi } from '../../api/api.js'; // Adjust the import path as necessary
+import { useEffect, useState } from 'react';
+import {
+  Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody,
+  Button, CircularProgress
+} from '@mui/material';
 import useAuth from '../../context/useAuth';
+import { bookingApi } from '../../api/api';
 
 const ManageBookings = () => {
   const { token } = useAuth();
   const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    if (!token) return;
     bookingApi.getBookings(token)
-      .then(data => setBookings(data))
-      .catch(() => setError('Failed to fetch bookings'))
+      .then(setBookings)
+      .catch(err => console.error('Failed to load bookings:', err))
       .finally(() => setLoading(false));
   }, [token]);
 
-  const handleConfirm = async (id) => {
+  const updateBookingStatus = async (id, status) => {
     try {
-      await bookingApi.updateBooking(id, { status: 'confirmed' }, token);
-      setBookings(bookings.map(b => b.id === id ? { ...b, status: 'confirmed' } : b));
+      await bookingApi.updateBooking(id, { status }, token);
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
     } catch (err) {
-      console.error(err);
-      setError('Failed to confirm booking');
+      console.error('Failed to update booking status:', err);
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await bookingApi.deleteBooking(id, token);
-      setBookings(bookings.filter(b => b.id !== id));
-    } catch (err) {
-      console.error(err);
-      setError('Failed to delete booking');
-    }
-  };
-
-  if (loading) return <CircularProgress />;
+  if (loading) return <CircularProgress sx={{ mt: 5 }} />;
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, p: 3 }}>
+    <Paper sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom>Manage Bookings</Typography>
-      {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Booking Reference</TableCell>
-            <TableCell>Flight</TableCell>
+            <TableCell>Reference</TableCell>
             <TableCell>User</TableCell>
+            <TableCell>Flight</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Seats</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -57,20 +48,27 @@ const ManageBookings = () => {
           {bookings.map(booking => (
             <TableRow key={booking.id}>
               <TableCell>{booking.booking_reference}</TableCell>
-              <TableCell>{booking.flight.flight_number}</TableCell>
-              <TableCell>{booking.user.username}</TableCell>
+              <TableCell>{booking.user?.username}</TableCell>
+              <TableCell>{booking.flight?.flight_number}</TableCell>
               <TableCell>{booking.status}</TableCell>
+              <TableCell>{booking.seats_booked}</TableCell>
               <TableCell>
                 {booking.status === 'pending' && (
-                  <Button onClick={() => handleConfirm(booking.id)}>Confirm</Button>
+                  <>
+                    <Button onClick={() => updateBookingStatus(booking.id, 'confirmed')} color="success" variant="contained" size="small" sx={{ mr: 1 }}>
+                      Confirm
+                    </Button>
+                    <Button onClick={() => updateBookingStatus(booking.id, 'cancelled')} color="error" variant="outlined" size="small">
+                      Cancel
+                    </Button>
+                  </>
                 )}
-                <Button color="error" onClick={() => handleDelete(booking.id)}>Delete</Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </Box>
+    </Paper>
   );
 };
 

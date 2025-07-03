@@ -7,7 +7,6 @@ import Payment from '../common/Payment';
 import ManagePayment from './ManagePayment';
 import Profile from '../common/Profile';
 import NotFound from '../common/NotFound';
-import Footer from '../common/Footer';
 
 const StaffLayout = () => {
   return (
@@ -48,7 +47,6 @@ const StaffLayout = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <Footer />
       </Box>
     </Box>
   );
