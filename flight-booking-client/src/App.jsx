@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-// import Home from './components/common/Home';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -11,13 +10,12 @@ import NotFound from './components/common/NotFound';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import useAuth from './context/useAuth';
-
 import { Box } from '@mui/material';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (!allowedRoles.includes(user.user_type)) return <Navigate to="/not-found" />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!allowedRoles.includes(user.user_type)) return <Navigate to="/not-found" replace />;
   return children;
 };
 
@@ -26,13 +24,11 @@ const App = () => {
     <ErrorBoundary>
       <Box display="flex" flexDirection="column" minHeight="100vh">
         <Header />
-
         <Box component="main" flex={1}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
-
             <Route
               path="/admin/*"
               element={
@@ -57,13 +53,11 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/not-found" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/not-found" />} />
+            <Route path="*" element={<Navigate to="/not-found" replace />} />
           </Routes>
         </Box>
-
         <Footer />
       </Box>
     </ErrorBoundary>

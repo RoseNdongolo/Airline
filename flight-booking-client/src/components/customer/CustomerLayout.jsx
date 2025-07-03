@@ -4,9 +4,9 @@ import SearchFlight from '../common/SearchFlight';
 import BookingForm from '../common/BookingForm';
 import MyBooking from '../common/MyBooking';
 import Payment from '../common/Payment';
-import Profile from '../common/Profile';
+
 import NotFound from '../common/NotFound';
-import Footer from '../common/Footer';
+
 
 const CustomerLayout = () => {
   return (
@@ -18,9 +18,6 @@ const CustomerLayout = () => {
           </ListItemButton>
           <ListItemButton component={Link} to="mybooking">
             <ListItemText primary="My Bookings" />
-          </ListItemButton>
-          <ListItemButton component={Link} to="profile">
-            <ListItemText primary="Profile" />
           </ListItemButton>
         </List>
         <Divider />
@@ -38,7 +35,6 @@ const CustomerLayout = () => {
           <Route path="booking/:flightId" element={<BookingForm />} />
           <Route path="mybooking" element={<MyBooking />} />
           <Route path="payment/:bookingId" element={<Payment />} />
-          <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>

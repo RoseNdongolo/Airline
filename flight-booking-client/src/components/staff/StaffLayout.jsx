@@ -5,7 +5,6 @@ import BookingForm from '../common/BookingForm';
 import MyBooking from '../common/MyBooking';
 import Payment from '../common/Payment';
 import ManagePayment from './ManagePayment';
-import Profile from '../common/Profile';
 import NotFound from '../common/NotFound';
 
 const StaffLayout = () => {
@@ -22,9 +21,6 @@ const StaffLayout = () => {
           </ListItemButton>
           <ListItemButton component={Link} to="payments">
             <ListItemText primary="Manage Payments" />
-          </ListItemButton>
-          <ListItemButton component={Link} to="profile">
-            <ListItemText primary="Profile" />
           </ListItemButton>
         </List>
         <Divider />
@@ -44,7 +40,7 @@ const StaffLayout = () => {
           <Route path="mybooking" element={<MyBooking />} />
           <Route path="payment/:bookingId" element={<Payment />} />
           <Route path="payments" element={<ManagePayment />} />
-          <Route path="profile" element={<Profile />} />
+         
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Box>
